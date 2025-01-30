@@ -7,9 +7,9 @@ void main(List<String> arguments) {
   dart_todolist_console.TodoList todoList = dart_todolist_console.TodoList();
 
   //  Ajout de quelques tâches
-  todoList.addTask("Acheter du pain");
-  todoList.addTask("Acheter du lait");
-  todoList.addTask("Acheter du beurre");
+  // todoList.addTask("Acheter du pain");
+  // todoList.addTask("Acheter du lait");
+  // todoList.addTask("Acheter du beurre");
 
   // Scanner pour lire les entrées de l'utilisateur
   int? choix;

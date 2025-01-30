@@ -1,5 +1,8 @@
 // Mise en place de TodolistConsole avec Dart
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dart_todolist_console/task/task.dart';
 
 class TodoList {
@@ -7,14 +10,16 @@ class TodoList {
 
   // Fonction pour récupérer la liste des todos
   List<Task> getTasksList() {
+    loadTodosFromFile();
     return tasksList;
   }
 
   // Fonction pour ajouter un todo
   void addTask(String description) {
     if (description.isNotEmpty) {
-      Task newTask = new Task(description);
-      tasksList.add(newTask);
+      Task newTask = Task(description);
+      getTasksList().add(newTask);
+      saveTodosInFile();
       print("Tâche ajoutée avec succès !");
     } else {
       print("La description de la tâche ne peut pas être vide !");
@@ -23,18 +28,18 @@ class TodoList {
 
   // Fonction pour supprimer un todo
   void deleteTask(int id) {
+    loadTodosFromFile();
     Task? checkTask;
-    int removedId = -1;
-    for (Task task in tasksList) {
+    for (Task task in getTasksList()) {
       if (task.id == id) {
         checkTask = task;
-        removedId = tasksList.indexOf(task);
         break;
       }
     }
 
-    if (checkTask != null && removedId != -1) {
-      tasksList.removeAt(removedId);
+    if (checkTask != null) {
+      tasksList.remove(checkTask);
+      saveTodosInFile();
       print("Tâche supprimée avec succès !");
     } else {
       print("Aucune tâche trouvée avec cet identifiant !");
@@ -44,7 +49,7 @@ class TodoList {
   // Fonction pour changer le statut d'une tâche
   void checkStatut(int id) {
     Task? checkTask;
-    for (Task task in tasksList) {
+    for (Task task in getTasksList()) {
       if (task.id == id) {
         checkTask = task;
         break;
@@ -53,6 +58,7 @@ class TodoList {
 
     if (checkTask != null) {
       checkTask.statut = !checkTask.statut;
+      saveTodosInFile();
       print("Statut de la tâche modifié avec succès !");
     } else {
       print("Aucune tâche trouvée avec cet identifiant !");
@@ -62,7 +68,7 @@ class TodoList {
   // Fonction pour modifier une tâche
   void editTask(int id, String newDescription) {
     Task? checkTask;
-    for (Task task in tasksList) {
+    for (Task task in getTasksList()) {
       if (task.id == id) {
         checkTask = task;
         break;
@@ -71,6 +77,7 @@ class TodoList {
 
     if (checkTask != null) {
       checkTask.description = newDescription;
+      saveTodosInFile();
       print("Tâche modifiée avec succès !");
     } else {
       print("Aucune tâche trouvée avec cet identifiant !");
@@ -80,7 +87,7 @@ class TodoList {
   // Fonction pour afficher une tâche spécifique
   void showTask(int id) {
     Task? checkTask;
-    for (Task task in tasksList) {
+    for (Task task in getTasksList()) {
       if (task.id == id) {
         checkTask = task;
         break;
@@ -97,13 +104,48 @@ class TodoList {
 
   // Fonction pour afficher toutes les tâches
   void showAllTasks() {
-    if (tasksList.isNotEmpty) {
-      for (Task task in tasksList) {
+    if (getTasksList().isNotEmpty) {
+      for (Task task in getTasksList()) {
         print(
             "Tâche n°${task.id} : ${task.description} - Statut : ${task.statut ? "Terminée" : "En cours"} ");
       }
     } else {
       print("Aucune tâche trouvée !");
+    }
+  }
+
+  // void saveTodosInFile() {
+  //   File file = File('todos.txt');
+  //   file.writeAsStringSync(jsonEncode(tasksList));
+  // }
+
+  // void loadTodosFromFile() {
+  //   File file = File('todos.txt');
+  //   if (file.existsSync()) {
+  //     String content = file.readAsStringSync();
+  //     tasksList = List<Task>.from(jsonDecode(content));
+  //   } else {
+  //     tasksList = [];
+  //   }
+  // }
+
+  // Mettre en place le système de fichiers pour la sauvegarde des todos
+  void saveTodosInFile() {
+    File file = File('todos.txt');
+    List<Map<String, dynamic>> jsonList =
+        tasksList.map((task) => task.toJson()).toList();
+    file.writeAsStringSync(jsonEncode(jsonList), mode: FileMode.write);
+  }
+
+  // Récupérer la liste des todos depuis le fichier
+  void loadTodosFromFile() {
+    File file = File('todos.txt');
+    if (file.existsSync()) {
+      String content = file.readAsStringSync();
+      List<dynamic> jsonList = jsonDecode(content);
+      tasksList = jsonList.map((json) => Task.fromJson(json)).toList();
+    } else {
+      tasksList = [];
     }
   }
 }
