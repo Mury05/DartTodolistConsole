@@ -46,6 +46,13 @@ class TodoList {
     }
   }
 
+ void deleteAllTask() {
+      loadTodosFromFile();
+      tasksList.clear();
+      saveTodosInFile();
+      print("Toutes les tâches ont été supprimées avec succès !");
+    }
+    
   // Fonction pour changer le statut d'une tâche
   void checkStatut(int id) {
     Task? checkTask;

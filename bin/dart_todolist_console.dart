@@ -21,7 +21,8 @@ void main(List<String> arguments) {
     print("3 - Afficher la liste des tâches");
     print("4 - Changer le statut d'une tâche");
     print("5 - Modifier une tâche");
-    print("6 - Quitter");
+    print("6 - Suppriner les tâches");
+    print("7 - Quitter");
     print("Entrez votre choix : ");
 
     choix = int.parse(stdin.readLineSync()!);
@@ -54,10 +55,13 @@ void main(List<String> arguments) {
         todoList.editTask(id, description);
         break;
       case 6:
+        print("Suppression de toutes les tâches...");
+        todoList.deleteAllTask();
+      case 7:
         print("Merci d'avoir utilisé notre application !");
         break;
       default:
         print("Choix invalide !");
     }
-  } while (choix != 6);
+  } while (choix != 7);
 }
