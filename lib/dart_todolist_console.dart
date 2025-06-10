@@ -16,7 +16,7 @@ class TodoList {
 
   // Fonction pour ajouter un todo
   void addTask(String description) {
-    if (description.isNotEmpty) {
+    if (description.isNotEmpty && description.trim() != "") {
       Task newTask = Task(description);
       getTasksList().add(newTask);
       saveTodosInFile();
